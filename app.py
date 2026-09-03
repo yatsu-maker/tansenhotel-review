@@ -2,7 +2,7 @@ import streamlit as st
 from google import genai
 
 # 1. ページ基本設定（ブラウザのタブ名とアイコン）
-st.set_page_config(page_title="〇〇ホテル クチコミ返信ツール", page_icon="🏨")
+st.set_page_config(page_title="丹泉ホテル クチコミ返信ツール", page_icon="🏨")
 
 # ------------------------------------------------------------------
 # 洗練されたデザインにするためのカスタムCSS
