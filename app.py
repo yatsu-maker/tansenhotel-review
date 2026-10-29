@@ -126,20 +126,26 @@ if st.button("返信文を生成する", type="primary"):
 4. 前置きや解説は含めず、そのまま管理画面にコピペできる返信文章のみを出力してください。{length_rule}
 """
 
-            with st.spinner("ホテルのナレッジを参照して返信文を作成中..."):
-                response = client.models.generate_content(
+with st.spinner("ホテルのナレッジを参照して返信文を作成中..."):
+                # generate_content_stream に変更し、逐次出力させる
+                response_stream = client.models.generate_content_stream(
                     model='gemini-3.5-flash',
                     contents=[system_prompt, f"クチコミ本文:\n{review_text}"]
                 )
+                
+                # 文字をパラパラ表示するための「空の箱」を用意
+                message_placeholder = st.empty()
+                full_response = ""
+                
+                # 届いた文字から順番に箱の中身を更新していく
+                for chunk in response_stream:
+                    if chunk.text:
+                        full_response += chunk.text
+                        message_placeholder.markdown(full_response + "▌")
+                
+                # 最後にカーソル(▌)を消す
+                message_placeholder.empty()
 
             st.success("作成が完了しました！")
-            st.text_area("生成された返信文（枠内をクリックし、すべて選択してコピーしてください）", response.text, height=300)
-
-        except Exception as e:
-            error_msg = str(e).lower()
-            if "503" in error_msg or "high demand" in error_msg:
-                st.error("⚠️ 現在、AIのサーバーが混み合っています。数秒〜1分ほど待ってから、もう一度ボタンを押してください。")
-            elif "429" in error_msg or "quota" in error_msg:
-                st.error("⚠️ 短時間の利用制限にかかりました。1分ほど待ってから再度お試しください。")
-            else:
-                st.error(f"⚠️ エラーが発生しました。少し時間をおいてやり直してください。（詳細: {e}）")
+            # 最終的な文章をコピー用のテキストエリアに表示
+            st.text_area("生成された返信文（枠内をクリックし、すべて選択してコピーしてください）", full_response, height=300)
