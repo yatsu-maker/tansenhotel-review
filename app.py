@@ -92,9 +92,9 @@ if st.button("返信文を生成する", type="primary"):
             review_length = len(review_text)
             if review_length <= 700:
                 target_length = review_length * 2
-                length_rule = f"\n5. 【重要】お客様のクチコミが{review_length}文字です。返信文はその約2倍（{target_length}文字程度）のボリュームになるよう、当ホテルの魅力や感謝の言葉をしっかり肉付けして作成してください。"
+                length_rule = f"\n5. 【重要】お客様のクチコミが{review_length}文字です。返信文はクチコミ内容と同じテキスト（{target_length}文字程度）のボリュームになるよう、当ホテルの魅力や感謝の言葉をしっかり肉付けして作成してください。"
             else:
-                length_rule = f"\n5. 【重要】お客様のクチコミが{review_length}文字と長文のため、簡潔かつ丁寧に要点をまとめた返信文を作成してください（無理に2倍にする必要はありません）。"
+                length_rule = f"\n5. 【重要】お客様のクチコミが{review_length}文字と長文のため、簡潔かつ丁寧に要点をまとめた返信文を作成してください。"
 
             # ★【重要】ここを新しいホテルの情報に書き換えます
             system_prompt = f"""
