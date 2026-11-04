@@ -123,32 +123,28 @@ if st.button("返信文を生成する", type="primary"):
 2. クチコミ内容を分析し、お褒めの言葉には感謝を、ご指摘やクレームには言い訳をせず誠実な謝罪と改善姿勢を示してください。
 3. 宿泊予約サイトにふさわしい丁寧でプロフェッショナルな「です・ます調」で作成してください。
 4. 前置きや解説は含めず、そのまま管理画面にコピペできる返信文章のみを出力してください。{length_rule}
+5. 返信の最後には必ず、改行して「赤湯温泉 丹泉ホテル」という署名（記名）を入れてください。
 """
 
             with st.spinner("ホテルのナレッジを参照して返信文を作成中..."):
-                # ★追加：generate_content_stream に変更し、逐次出力させる
                 response_stream = client.models.generate_content_stream(
                     model='gemini-3.5-flash',
                     contents=[system_prompt, f"クチコミ本文:\n{review_text}"]
                 )
                 
-                # 文字をパラパラ表示するための「空の箱」を用意
                 message_placeholder = st.empty()
                 full_response = ""
                 
-                # 届いた文字から順番に箱の中身を更新していく
                 for chunk in response_stream:
                     if chunk.text:
                         full_response += chunk.text
                         message_placeholder.markdown(full_response + "▌")
                 
-                # 最後にカーソル(▌)を消す
                 message_placeholder.empty()
 
             st.success("作成が完了しました！")
             st.text_area("生成された返信文（枠内をクリックし、すべて選択してコピーしてください）", full_response, height=300)
 
-        # ★これが消えていたためエラーになっていました
         except Exception as e:
             error_msg = str(e).lower()
             if "503" in error_msg or "high demand" in error_msg:
