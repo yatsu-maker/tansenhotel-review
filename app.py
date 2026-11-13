@@ -23,19 +23,18 @@ st.caption("クチコミを貼り付けるか、画像をアップロードす�
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 if not api_key: api_key = st.sidebar.text_input("Gemini API Key", type="password")
 
-# ★フォームで囲み、Ctrl+Enterに対応させる
 with st.form("review_form"):
     review_text = st.text_area("お客様からのクチコミ本文（テキスト）：", height=150)
+    
     uploaded_file = st.file_uploader("クチコミの画像（スクリーンショット）を「コピーして貼り付け」または\n「ドラッグ＆ドロップ」", type=["png", "jpg", "jpeg"])
+    # ★スタッフ向けの注意書きを追加
+    st.caption("⚠️ **ご注意**：AIが文字を視覚的に解析するため、画像の読み取りはテキスト入力よりも生成に時間がかかります。")
+    
     tone = st.radio("返信の方向性：", ["標準（丁寧・誠実）", "感謝強調（高評価向け）", "お詫び・改善強調（低評価向け）"], horizontal=True)
     
-    # スタッフ向けの案内文
     st.caption("💡 **ヒント**：入力後にキーボードの **Ctrl ＋ Enter**（Macは ⌘ ＋ Enter）を押すことでも生成をスタートできます。")
-    
-    # フォーム用の送信ボタン
     submitted = st.form_submit_button("返信文を生成する", type="primary")
 
-# ★送信されたあとの処理
 if submitted:
     if not api_key: st.error("APIキーが設定されていません。")
     elif not review_text and not uploaded_file: st.warning("クチコミ本文を入力するか、画像をアップロードしてください。")
